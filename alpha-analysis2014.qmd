@@ -3,6 +3,15 @@ title: "The Data Cleaning Document"
 format: html
 ---
 
+# Your tasks:
+
+1. Move all of the data cleaning code up to the top, so we just work with one data set, named `tidy_age_state_education_2014`
+2. Create two functions to clean the data: 
+  1. tidy the age groups
+  2. remove the missing values
+3. Put these two functions into another function that does the data cleaning
+4. Think about identifying some functions to check the data quality.
+
 # Onboarding
 
 Hi there! Welcome to the group! This is "The Data Cleaning Document". Here's the process

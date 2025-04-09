@@ -103,19 +103,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Read the data in</li>
 <li>Go through various ad hoc tests</li>
 <li>Make sure the data is “clean”</li>
-<li>Repeat for subsequent years of data</li>
-<li>Produce a plot of the num,ber of people studying in each age group in each state</li>
-<li>Produce a box plot, and a table that shows The 5 number summary (min, 1st quartile, median, 3rd quartile, max) of number educated for each state.</li>
-<li>Produce a table stating the summary of proportion educated in each state</li>
+<li>Produce a plot of the <strong>proportion of people educated</strong> in each age group in each state</li>
+<li>Produce a box plot of <strong>proportion of people educated</strong> for each state.</li>
+<li>Produce a table of The 5 number summary (min, 1st quantile, median, 3rd quantile, max) of <strong>proportion of people educated</strong> for each state.</li>
+<li>Produce a table stating the 5 number summary of <strong>proportion educated</strong> in each state</li>
 </ol>
 <p>When we get another dataset, we make a new document to clean that data. The process is:</p>
 <ol type="1">
 <li>Copy this document</li>
 <li>Update the data</li>
 <li>Check it is “clean”</li>
-<li>Make the same plot</li>
+<li>Make the same plots and tables</li>
 </ol>
-<p>It might seem repetitive, and there’s often little sneaky bits in there, but it’s just part of the process! Enjoy!</p>
+<p>It might seem repetitive, and there’s often little sneaky bits in there, but it’s just part of the process!</p>
+<p>Enjoy!</p>
 </section>
 <section id="data-cleaning" class="level1">
 <h1>Data Cleaning</h1>
@@ -133,9 +134,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 ✖ dplyr::lag()    masks stats::lag()
 ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>education_2014 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"https://raw.githubusercontent.com/njtierney/ozed/refs/heads/main/data/raw/raw_education_2014.csv"</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>education_2014 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"raw_education_2014.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 72 Columns: 6
 ── Column specification ────────────────────────────────────────────────────────
@@ -211,78 +210,52 @@ dbl (4): year, n_studying, population, prop_studying
 </div>
 </div>
 <p>Good!</p>
-<p>Check to see how state and territory names are formatted</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(fixed_age_group_education_2014<span class="sc">$</span>state_territory)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
- ACT  NSW   NT  Qld   SA Tas. Vic.   WA 
-   9    9    9    9    9    9    9    9 </code></pre>
-</div>
-</div>
-<p>We need them to all be upper case with no punctuation</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>fixed_age_state_education_2014 <span class="ot">&lt;-</span> fixed_age_group_education_2014 <span class="sc">|&gt;</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">state_territory =</span> <span class="fu">toupper</span>(state_territory),</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">state_territory =</span> <span class="fu">str_remove_all</span>(state_territory, <span class="at">pattern =</span> <span class="st">"</span><span class="sc">\\</span><span class="st">."</span>)</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Check this</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(fixed_age_state_education_2014<span class="sc">$</span>state_territory)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-ACT NSW  NT QLD  SA TAS VIC  WA 
-  9   9   9   9   9   9   9   9 </code></pre>
-</div>
-</div>
 </section>
-<section id="plot-of-proportion-of-people-studying-in-each-age-group-in-each-state" class="level1">
-<h1>Plot of proportion of people studying in each age group in each state</h1>
+<section id="produce-a-plot-of-the-proportion-of-people-educated-in-each-age-group-in-each-state" class="level1">
+<h1>Produce a plot of the <strong>proportion of people educated</strong> in each age group in each state</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># now let's explore the number of people studying in each age group in each state</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  fixed_age_state_education_2014,</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> prop_studying,</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> age_group</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>state_territory, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># now let's explore the number of people studying in each age group in each state</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  fixed_age_group_education_2014,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> prop_studying,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> age_group</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>state_territory, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="analysis2014_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="analysis2014_files/figure-html/plot-prop-age-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Why are there negative proportions?</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fixed_age_state_education_2014<span class="sc">$</span>prop_studying)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fixed_age_group_education_2014<span class="sc">$</span>prop_studying)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
 -99.00000   0.04336   0.09689  -9.43794   0.19806   0.86698 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(fixed_age_state_education_2014<span class="sc">$</span>prop_studying)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(fixed_age_group_education_2014<span class="sc">$</span>prop_studying)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="analysis2014_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="analysis2014_files/figure-html/summarise-prop-studying-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>-99 means missing! Are there other instances of -99?</p>
+<p>Maybe -99 means missing!? Are there other instances of -99?</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(naniar)</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">miss_scan_count</span>(</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> fixed_age_state_education_2014,</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">search =</span> <span class="sc">-</span><span class="dv">99</span></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(naniar)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">miss_scan_count</span>(</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> fixed_age_group_education_2014,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">search =</span> <span class="sc">-</span><span class="dv">99</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 2
   Variable            n
@@ -297,26 +270,28 @@ ACT NSW  NT QLD  SA TAS VIC  WA
 </div>
 <p>Replace -99 with NA</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>tidy_age_state_education_2014 <span class="ot">&lt;-</span> fixed_age_state_education_2014 <span class="sc">|&gt;</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">prop_studying =</span> <span class="fu">na_if</span>(prop_studying, <span class="sc">-</span><span class="dv">99</span>)</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="fu">n_miss</span>(tidy_age_state_education_2014)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>tidy_age_state_education_2014 <span class="ot">&lt;-</span> fixed_age_group_education_2014 <span class="sc">|&gt;</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">prop_studying =</span> <span class="fu">na_if</span>(prop_studying, <span class="sc">-</span><span class="dv">99</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="fu">n_miss</span>(tidy_age_state_education_2014)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 7</code></pre>
 </div>
 </div>
-<p>Box plot, and a table that shows The 5 number summary (min, 1st quartile, median, 3rd quartile, max) of number educated for each state.</p>
+</section>
+<section id="produce-a-box-plot-of-proportion-of-people-educated-for-each-state." class="level1">
+<h1>Produce a box plot of <strong>proportion of people educated</strong> for each state.</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  tidy_age_state_education_2014,</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> prop_studying,</span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> state_territory</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  tidy_age_state_education_2014,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> prop_studying,</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> state_territory</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Removed 7 rows containing non-finite outside the scale range
 (`stat_boxplot()`).</code></pre>
@@ -324,87 +299,132 @@ ACT NSW  NT QLD  SA TAS VIC  WA
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="analysis2014_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="analysis2014_files/figure-html/boxplot-prop-studying-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="table-stating-the-summary-of-each-state" class="level1">
-<h1>Table stating the summary of each state</h1>
+<section id="produce-a-table-of-the-5-number-summary-min-1st-quantile-median-3rd-quantile-max-of-proportion-of-people-educated-for-each-state." class="level1">
+<h1>Produce a table of The 5 number summary (min, 1st quantile, median, 3rd quantile, max) of <strong>proportion of people educated</strong> for each state.</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>tidy_age_state_education_2014 <span class="sc">|&gt;</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(state_territory) <span class="sc">|&gt;</span></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_study =</span> <span class="fu">mean</span>(prop_studying),</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_study =</span> <span class="fu">sd</span>(prop_studying)</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 8 × 3
-  state_territory mean_study sd_study
-  &lt;chr&gt;                &lt;dbl&gt;    &lt;dbl&gt;
-1 ACT                 NA       NA    
-2 NSW                 NA       NA    
-3 NT                  NA       NA    
-4 QLD                  0.187    0.237
-5 SA                  NA       NA    
-6 TAS                 NA       NA    
-7 VIC                  0.214    0.284
-8 WA                  NA       NA    </code></pre>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>tidy_age_state_education_2014 <span class="sc">|&gt;</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(state_territory) <span class="sc">|&gt;</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_study =</span> <span class="fu">min</span>(prop_studying),</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">q1_studying =</span> <span class="fu">quantile</span>(prop_studying, <span class="at">probs =</span> <span class="fl">0.25</span>),</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_study =</span> <span class="fu">median</span>(prop_studying),</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">q3_studying =</span> <span class="fu">quantile</span>(prop_studying, <span class="at">probs =</span> <span class="fl">0.75</span>),</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_study =</span> <span class="fu">sd</span>(prop_studying)</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<pre><code>Error in `summarise()`:
+ℹ In argument: `q1_studying = quantile(prop_studying, probs = 0.25)`.
+ℹ In group 1: `state_territory = "ACT"`.
+Caused by error in `quantile.default()`:
+! missing values and NaN's not allowed if 'na.rm' is FALSE</code></pre>
 </div>
 </div>
 <p>Drop NA values</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>tidy_age_state_education_2014 <span class="sc">|&gt;</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(state_territory) <span class="sc">|&gt;</span></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_study =</span> <span class="fu">mean</span>(prop_studying, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_study =</span> <span class="fu">sd</span>(prop_studying, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 8 × 3
-  state_territory mean_study sd_study
-  &lt;chr&gt;                &lt;dbl&gt;    &lt;dbl&gt;
-1 ACT                  0.276    0.272
-2 NSW                  0.228    0.284
-3 NT                   0.195    0.248
-4 QLD                  0.187    0.237
-5 SA                   0.143    0.134
-6 TAS                  0.215    0.279
-7 VIC                  0.214    0.284
-8 WA                   0.200    0.241</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>education_2015 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"https://raw.githubusercontent.com/njtierney/ozed/refs/heads/main/data/raw/raw_education_2015.csv"</span></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Rows: 72 Columns: 6
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: ","
-chr (2): state_territory, age_group
-dbl (4): year, n_studying, population, prop_studying
-
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>education_2015</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 72 × 6
-    year state_territory age_group n_studying population prop_studying
-   &lt;dbl&gt; &lt;chr&gt;           &lt;chr&gt;          &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;
- 1  2015 ACT             15---19         20.5       22.7        0.903 
- 2  2015 ACT             20---24         13.2       29.5      -99     
- 3  2015 ACT             25-29           10         33.2        0.301 
- 4  2015 ACT             30--34           5.4       32.3        0.167 
- 5  2015 ACT             35-39            4.8       28.3        0.170 
- 6  2015 ACT             40--44           1.9       28.1        0.0676
- 7  2015 ACT             45---49          1.9       25.3        0.0751
- 8  2015 ACT             50-54            2.3       24.6        0.0935
- 9  2015 ACT             55-74            0.7       68.1        0.0103
-10  2015 NSW             15-19          389.       460.         0.845 
-# ℹ 62 more rows</code></pre>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>tidy_age_state_education_2014 <span class="sc">|&gt;</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(state_territory) <span class="sc">|&gt;</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_study =</span> <span class="fu">min</span>(prop_studying, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">q1_studying =</span> <span class="fu">quantile</span>(prop_studying, <span class="at">probs =</span> <span class="fl">0.25</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_study =</span> <span class="fu">median</span>(prop_studying, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">q3_studying =</span> <span class="fu">quantile</span>(prop_studying, <span class="at">probs =</span> <span class="fl">0.75</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_study =</span> <span class="fu">sd</span>(prop_studying, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 22%">
+<col style="width: 13%">
+<col style="width: 16%">
+<col style="width: 18%">
+<col style="width: 16%">
+<col style="width: 12%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">state_territory</th>
+<th style="text-align: right;">min_study</th>
+<th style="text-align: right;">q1_studying</th>
+<th style="text-align: right;">median_study</th>
+<th style="text-align: right;">q3_studying</th>
+<th style="text-align: right;">sd_study</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">ACT</td>
+<td style="text-align: right;">0.041</td>
+<td style="text-align: right;">0.117</td>
+<td style="text-align: right;">0.147</td>
+<td style="text-align: right;">0.345</td>
+<td style="text-align: right;">0.272</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NSW</td>
+<td style="text-align: right;">0.017</td>
+<td style="text-align: right;">0.063</td>
+<td style="text-align: right;">0.101</td>
+<td style="text-align: right;">0.262</td>
+<td style="text-align: right;">0.284</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NT</td>
+<td style="text-align: right;">0.021</td>
+<td style="text-align: right;">0.050</td>
+<td style="text-align: right;">0.115</td>
+<td style="text-align: right;">0.199</td>
+<td style="text-align: right;">0.248</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Qld</td>
+<td style="text-align: right;">0.016</td>
+<td style="text-align: right;">0.060</td>
+<td style="text-align: right;">0.105</td>
+<td style="text-align: right;">0.170</td>
+<td style="text-align: right;">0.237</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SA</td>
+<td style="text-align: right;">0.027</td>
+<td style="text-align: right;">0.059</td>
+<td style="text-align: right;">0.112</td>
+<td style="text-align: right;">0.149</td>
+<td style="text-align: right;">0.134</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tas.</td>
+<td style="text-align: right;">0.010</td>
+<td style="text-align: right;">0.064</td>
+<td style="text-align: right;">0.118</td>
+<td style="text-align: right;">0.202</td>
+<td style="text-align: right;">0.279</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Vic.</td>
+<td style="text-align: right;">0.016</td>
+<td style="text-align: right;">0.046</td>
+<td style="text-align: right;">0.079</td>
+<td style="text-align: right;">0.215</td>
+<td style="text-align: right;">0.284</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">WA</td>
+<td style="text-align: right;">0.013</td>
+<td style="text-align: right;">0.063</td>
+<td style="text-align: right;">0.103</td>
+<td style="text-align: right;">0.217</td>
+<td style="text-align: right;">0.241</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </section>
