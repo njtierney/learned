@@ -10,23 +10,26 @@ Hi there! Welcome to the group! This is "The Data Cleaning Document". Here's the
 1. Read the data in
 2. Go through various ad hoc tests
 3. Make sure the data is "clean"
-4. Repeat for subsequent years of data
-5. Produce a plot of the number of people studying in each age group in each state
-6. Produce a box plot, and a table that shows The 5 number summary (min, 1st quartile, median, 3rd quartile, max) of number educated for each state.
-7. Produce a table stating the summary of proportion educated in each state
+4. Produce a plot of the **proportion of people educated** in each age group in each state
+5. Produce a box plot of **proportion of people educated** for each state.
+6. Produce a table of The 5 number summary (min, 1st quantile, median, 3rd quantile, max)  of **proportion of people educated** for each state.
+7. Produce a table stating the 5 number summary of **proportion educated** in each state
 
 When we get another dataset, we make a new document to clean that data. The process is:
 
 1. Copy this document
 2. Update the data
 3. Check it is "clean"
-4. Make the same plot
+4. Make the same plots and tables
 
-It might seem repetitive, and there's often little sneaky bits in there, but it's just part of the process! Enjoy!
+It might seem repetitive, and there's often little sneaky bits in there, but it's just part of the process! 
+
+Enjoy!
 
 # Data Cleaning
 
 ```{r}
+#| label: read-data
 library(tidyverse)
 
 education_2014 <- read_csv("raw_education_2014.csv")
@@ -40,12 +43,14 @@ education_2014
 Check to see how people have done the separations between ages
 
 ```{r}
+#| label: table-ages
 table(education_2014$age_group)
 ```
 
 We need to make sure that they are separated by `_` only:
 
 ```{r}
+#| label: fix-age-groups
 fixed_age_group_education_2014 <- education_2014 |>
   mutate(
     age_group = str_replace_all(
@@ -61,23 +66,26 @@ fixed_age_group_education_2014 <- education_2014 |>
 Check if this is fixed
 
 ```{r}
+#| label: check-age-groups
 table(fixed_age_group_education_2014$age_group)
 ```
 
 Check to see if year is right
 
 ```{r}
+#| label: check-year
 table(fixed_age_group_education_2014$year)
 ```
 
 Good!
 
-# Plot of proportion of people studying in each age group in each state
+# Produce a plot of the **proportion of people educated** in each age group in each state
 
 ```{r}
+#| label: plot-prop-age
 # now let's explore the number of people studying in each age group in each state
 ggplot(
-  fixed_age_state_education_2014,
+  fixed_age_group_education_2014,
   aes(
     x = prop_studying,
     y = age_group
@@ -91,19 +99,20 @@ ggplot(
 Why are there negative proportions?
 
 ```{r}
-summary(fixed_age_state_education_2014$prop_studying)
-hist(fixed_age_state_education_2014$prop_studying)
+#| label: summarise-prop-studying
+summary(fixed_age_group_education_2014$prop_studying)
+hist(fixed_age_group_education_2014$prop_studying)
 ```
 
-
--99 means missing! Are there other instances of -99?
+Maybe -99 means missing!? Are there other instances of -99?
 
 
 ```{r}
+#| label: scan-missings
 library(naniar)
 
 miss_scan_count(
-  data = fixed_age_state_education_2014,
+  data = fixed_age_group_education_2014,
   search = -99
 )
 ```
@@ -111,7 +120,8 @@ miss_scan_count(
 Replace -99 with NA
 
 ```{r}
-tidy_age_state_education_2014 <- fixed_age_state_education_2014 |>
+#| label: tidy-nas
+tidy_age_state_education_2014 <- fixed_age_group_education_2014 |>
   mutate(
     prop_studying = na_if(prop_studying, -99)
   )
@@ -119,9 +129,10 @@ tidy_age_state_education_2014 <- fixed_age_state_education_2014 |>
 n_miss(tidy_age_state_education_2014)
 ```
 
-Box plot, and a table that shows The 5 number summary (min, 1st quartile, median, 3rd quartile, max) of number educated for each state.
+# Produce a box plot of **proportion of people educated** for each state.
 
 ```{r}
+#| label: boxplot-prop-studying
 ggplot(
   tidy_age_state_education_2014,
   aes(
@@ -132,31 +143,35 @@ ggplot(
   geom_boxplot()
 ```
 
-# Table stating the summary of each state
+# Produce a table of The 5 number summary (min, 1st quantile, median, 3rd quantile, max)  of **proportion of people educated** for each state.
 
 ```{r}
+#| label: table-prop-studying
+#| error: true
 tidy_age_state_education_2014 |>
   group_by(state_territory) |>
   summarise(
-    mean_study = mean(prop_studying),
+    min_study = min(prop_studying),
+    q1_studying = quantile(prop_studying, probs = 0.25),
+    median_study = median(prop_studying),
+    q3_studying = quantile(prop_studying, probs = 0.75),
     sd_study = sd(prop_studying)
-  )
+  ) |> 
+  knitr::kable(digits = 3)
 ```
 
 Drop NA values
 
 ```{r}
+#| label: table-prop-studying-na
 tidy_age_state_education_2014 |>
   group_by(state_territory) |>
   summarise(
-    mean_study = mean(prop_studying, na.rm = TRUE),
+    min_study = min(prop_studying, na.rm = TRUE),
+    q1_studying = quantile(prop_studying, probs = 0.25, na.rm = TRUE),
+    median_study = median(prop_studying, na.rm = TRUE),
+    q3_studying = quantile(prop_studying, probs = 0.75, na.rm = TRUE),
     sd_study = sd(prop_studying, na.rm = TRUE)
-  )
-```
-
-```{r}
-
-education_2015 <- read_csv("raw_education_2015.csv")
-
-education_2015
+  ) |> 
+  knitr::kable(digits = 3)
 ```
