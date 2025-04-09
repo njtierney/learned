@@ -1,6 +1,10 @@
 ---
-title: "Solution Alpha: The Data Cleaning Document"
+title: "Analysis 2014"
 format: html
+vignette: >
+  %\VignetteIndexEntry{Analysis 2014}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
 ---
 
 # Your Tasks
