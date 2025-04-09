@@ -5,12 +5,13 @@ format: html
 
 # Your Tasks
 
-1. Move all the "data quality" checks into a new section called "data quality"
-2. Move all of the data cleaning code up to the top, so we just work with one data set, named `tidy_age_state_education_2014`
-3. Create two functions to clean the data: 
-  1. tidy the age groups
-  2. remove the missing values
-4. Put these two functions into another function that does the data cleaning
+1. Write a function for each of the following:
+  1. Bar plot of proportion of people educated by state and age
+  2. Boxplot of **proportion of people educated** for each state
+  3. Table of 5 number summary of **proportion of people educated** for each state
+2. Move all these functions to the top of the document into a single code chunk labelled "functions"
+3. Move the "data checks" to the end of the document. We will come back to this later
+4. Make a "libraries" code chunk and put the library call in there
 
 
 # Onboarding
@@ -40,9 +41,8 @@ Enjoy!
 ```{r}
 #| label: read-data
 library(tidyverse)
-library(here)
 
-education_2014 <- read_csv(here("raw_education_2014.csv"))
+education_2014 <- read_csv("raw_education_2014.csv")
 
 education_2014
 

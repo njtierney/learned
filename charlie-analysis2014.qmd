@@ -1,0 +1,187 @@
+---
+title: "Solution Alpha: The Data Cleaning Document"
+format: html
+---
+
+# Your Tasks
+
+1. Use `use_r()` from `devtools`/`usethis` to create a separate R file for each of the R functions:
+  1. clean_age_groups
+  2. clean_education_data
+  3. plot_study_age_state
+  4. boxplot_study_state
+  5. summarise_prop_study
+2. load all of these R functions, by calling `source` at the top of the quarto document
+
+# Onboarding
+
+Hi there! Welcome to the group! This is "The Data Cleaning Document". Here's the process
+
+1. Read the data in
+2. Go through various ad hoc tests
+3. Make sure the data is "clean"
+4. Produce a plot of the **proportion of people educated** in each age group in each state
+5. Produce a box plot of **proportion of people educated** for each state.
+6. Produce a table of The 5 number summary (min, 1st quantile, median, 3rd quantile, max)  of **proportion of people educated** for each state.
+
+When we get another dataset, we make a new document to clean that data. The process is:
+
+1. Copy this document
+2. Update the data
+3. Check it is "clean"
+4. Make the same plots and tables
+
+It might seem repetitive, and there's often little sneaky bits in there, but it's just part of the process! 
+
+Enjoy!
+
+# Libraries
+
+```{r}
+#| label: libraries
+library(tidyverse)
+library(naniar)
+library(here)
+```
+
+
+# Functions
+
+```{r}
+#| label: functions
+
+# clean age groups
+# We need to make sure that they are separated by `_` only:
+clean_age_groups <- function(age_groups){
+  clean_age <- str_replace_all(
+      age_groups,
+      pattern = "---|--|-",
+      replacement = "_"
+    )
+  
+  as.factor(clean_age)
+}
+
+# write a cleaning data function
+
+clean_education_data <- function(data){
+  data |> 
+  mutate(
+    age_group = clean_age_groups(age_group),
+    prop_studying = na_if(prop_studying, -99)
+  )
+}
+
+# Functions for plotting and tables
+
+plot_study_age_state <- function(data){
+  ggplot(
+  data = data,
+  aes(
+    x = prop_studying,
+    y = age_group
+  )
+) +
+  geom_col() +
+  facet_wrap(~state_territory, ncol = 2)
+
+}
+
+boxplot_study_state <- function(data){
+  ggplot(
+  data,
+  aes(
+    x = prop_studying,
+    y = state_territory
+  )
+) +
+  geom_boxplot()
+
+}
+
+summarise_prop_study <- function(data){
+  data |>
+    group_by(state_territory) |>
+    summarise(
+      min_study = min(prop_studying, na.rm = TRUE),
+      q1_studying = quantile(prop_studying, probs = 0.25, na.rm = TRUE),
+      median_study = median(prop_studying, na.rm = TRUE),
+      q3_studying = quantile(prop_studying, probs = 0.75, na.rm = TRUE),
+      sd_study = sd(prop_studying, na.rm = TRUE)
+  ) 
+}
+
+```
+
+# Data Cleaning
+
+```{r}
+#| label: read-data
+education_2014 <- read_csv(here("raw_education_2014.csv"))
+
+education_2014
+
+tidy_age_state_education_2014 <- clean_education_data(
+  education_2014
+)
+
+tidy_age_state_education_2014
+```
+
+
+
+# Produce a plot of the **proportion of people educated** in each age group in each state
+
+```{r}
+#| label: plot-prop-age
+plot_study_age_state(tidy_age_state_education_2014)
+
+```
+
+# Produce a box plot of **proportion of people educated** for each state.
+
+```{r}
+#| label: boxplot-prop-studying
+boxplot_study_state(tidy_age_state_education_2014)
+```
+
+# Produce a table of The 5 number summary (min, 1st quantile, median, 3rd quantile, max)  of **proportion of people educated** for each state.
+
+```{r}
+#| label: table-prop-studying-na
+summarise_prop_study(tidy_age_state_education_2014) |> 
+  knitr::kable(digits = 3)
+```
+
+## data quality checks
+
+Check to see how people have done the separations between ages
+
+```{r}
+#| label: table-ages
+table(education_2014$age_group)
+table(education_2014$year)
+```
+
+Check summaries of data:
+
+```{r}
+#| label: summarise-prop-studying
+summary(education_2014)
+```
+
+Maybe -99 means missing!? Are there other instances of -99?
+
+```{r}
+hist(education_2014$prop_studying)
+```
+
+
+```{r}
+#| label: scan-missings
+
+miss_scan_count(
+  data = education_2014,
+  search = -99
+)
+```
