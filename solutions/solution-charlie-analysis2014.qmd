@@ -12,28 +12,15 @@ format: html
   4. boxplot_study_state
   5. summarise_prop_study
 2. load all of these R functions, by calling `source` at the top of the quarto document
+3. Replace "onboarding" with "objectives and leave only the main objectives
 
-# Onboarding
-
-Hi there! Welcome to the group! This is "The Data Cleaning Document". Here's the process
+# Objectives
 
 1. Read the data in
-2. Go through various ad hoc tests
 3. Make sure the data is "clean"
 4. Produce a plot of the **proportion of people educated** in each age group in each state
 5. Produce a box plot of **proportion of people educated** for each state.
 6. Produce a table of The 5 number summary (min, 1st quantile, median, 3rd quantile, max)  of **proportion of people educated** for each state.
-
-When we get another dataset, we make a new document to clean that data. The process is:
-
-1. Copy this document
-2. Update the data
-3. Check it is "clean"
-4. Make the same plots and tables
-
-It might seem repetitive, and there's often little sneaky bits in there, but it's just part of the process! 
-
-Enjoy!
 
 # Libraries
 
@@ -49,68 +36,11 @@ library(here)
 
 ```{r}
 #| label: functions
-
-# clean age groups
-# We need to make sure that they are separated by `_` only:
-clean_age_groups <- function(age_groups){
-  clean_age <- str_replace_all(
-      age_groups,
-      pattern = "---|--|-",
-      replacement = "_"
-    )
-  
-  as.factor(clean_age)
-}
-
-# write a cleaning data function
-
-clean_education_data <- function(data){
-  data |> 
-  mutate(
-    age_group = clean_age_groups(age_group),
-    prop_studying = na_if(prop_studying, -99)
-  )
-}
-
-# Functions for plotting and tables
-
-plot_study_age_state <- function(data){
-  ggplot(
-  data = data,
-  aes(
-    x = prop_studying,
-    y = age_group
-  )
-) +
-  geom_col() +
-  facet_wrap(~state_territory, ncol = 2)
-
-}
-
-boxplot_study_state <- function(data){
-  ggplot(
-  data,
-  aes(
-    x = prop_studying,
-    y = state_territory
-  )
-) +
-  geom_boxplot()
-
-}
-
-summarise_prop_study <- function(data){
-  data |>
-    group_by(state_territory) |>
-    summarise(
-      min_study = min(prop_studying, na.rm = TRUE),
-      q1_studying = quantile(prop_studying, probs = 0.25, na.rm = TRUE),
-      median_study = median(prop_studying, na.rm = TRUE),
-      q3_studying = quantile(prop_studying, probs = 0.75, na.rm = TRUE),
-      sd_study = sd(prop_studying, na.rm = TRUE)
-  ) 
-}
-
+source(here("R/boxplot_study_state.R"))
+source(here("R/clean_age_groups.R"))
+source(here("R/clean_education_data.R"))
+source(here("R/plot_study_age_state.R"))
+source(here("R/summarise_prop_study.R"))
 ```
 
 # Data Cleaning
