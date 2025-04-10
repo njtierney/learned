@@ -33,30 +33,18 @@ vignette: >
 library(tidyverse)
 library(naniar)
 library(here)
+library(learned)
 ```
 
-
-# Functions
-
-```{r}
-#| label: functions
-source(here("R/boxplot_study_state.R"))
-source(here("R/clean_age_groups.R"))
-source(here("R/clean_education_data.R"))
-source(here("R/plot_study_age_state.R"))
-source(here("R/summarise_prop_study.R"))
-```
 
 # Data Cleaning
 
 ```{r}
 #| label: read-data
-education_2014 <- read_csv(here("raw_education_2014.csv"))
-
-education_2014
+raw_education_2014
 
 tidy_age_state_education_2014 <- clean_education_data(
-  education_2014
+  raw_education_2014
 )
 
 tidy_age_state_education_2014
@@ -93,21 +81,21 @@ Check to see how people have done the separations between ages
 
 ```{r}
 #| label: table-ages
-table(education_2014$age_group)
-table(education_2014$year)
+table(raw_education_2014$age_group)
+table(raw_education_2014$year)
 ```
 
 Check summaries of data:
 
 ```{r}
 #| label: summarise-prop-studying
-summary(education_2014)
+summary(raw_education_2014)
 ```
 
 Maybe -99 means missing!? Are there other instances of -99?
 
 ```{r}
-hist(education_2014$prop_studying)
+hist(raw_education_2014$prop_studying)
 ```
 
 
@@ -115,7 +103,7 @@ hist(education_2014$prop_studying)
 #| label: scan-missings
 
 miss_scan_count(
-  data = education_2014,
+  data = raw_education_2014,
   search = -99
 )
 ```
