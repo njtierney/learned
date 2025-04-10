@@ -16,5 +16,5 @@ a ggplot object
 Provide a boxplot of study data
 }
 \examples{
-# no example data yet
+boxplot_study_state(raw_education_2014)
 }

@@ -6,7 +6,7 @@
 #' @export
 #'
 #' @examples
-#' # no example data yet
+#' boxplot_study_state(raw_education_2014)
 boxplot_study_state <- function(data) {
   ggplot2::ggplot(
     data,
