@@ -1,0 +1,107 @@
+---
+title: "Analysis 2014"
+format: html
+vignette: >
+  %\VignetteIndexEntry{Analysis 2014}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Your Tasks
+
+1. Use `use_r()` from `devtools`/`usethis` to create a separate R file for each of the R functions:
+  1. clean_age_groups
+  2. clean_education_data
+  3. plot_study_age_state
+  4. boxplot_study_state
+  5. summarise_prop_study
+2. load all of these R functions, by calling `source` at the top of the quarto document
+3. Replace "onboarding" with "objectives and leave only the main objectives
+
+# Objectives
+
+1. Read the data in
+3. Make sure the data is "clean"
+4. Produce a plot of the **proportion of people educated** in each age group in each state
+5. Produce a box plot of **proportion of people educated** for each state.
+6. Produce a table of The 5 number summary (min, 1st quantile, median, 3rd quantile, max)  of **proportion of people educated** for each state.
+
+# Libraries
+
+```{r}
+#| label: libraries
+library(naniar)
+library(learned)
+```
+
+
+# Data Cleaning
+
+```{r}
+#| label: read-data
+raw_education_2014
+
+tidy_age_state_education_2014 <- clean_education_data(
+  raw_education_2014
+)
+
+tidy_age_state_education_2014
+```
+
+
+
+# Produce a plot of the **proportion of people educated** in each age group in each state
+
+```{r}
+#| label: plot-prop-age
+plot_study_age_state(tidy_age_state_education_2014)
+
+```
+
+# Produce a box plot of **proportion of people educated** for each state.
+
+```{r}
+#| label: boxplot-prop-studying
+boxplot_study_state(tidy_age_state_education_2014)
+```
+
+# Produce a table of The 5 number summary (min, 1st quantile, median, 3rd quantile, max)  of **proportion of people educated** for each state.
+
+```{r}
+#| label: table-prop-studying-na
+summarise_prop_study(tidy_age_state_education_2014) |> 
+  knitr::kable(digits = 3)
+```
+
+## data quality checks
+
+Check to see how people have done the separations between ages
+
+```{r}
+#| label: table-ages
+table(raw_education_2014$age_group)
+table(raw_education_2014$year)
+```
+
+Check summaries of data:
+
+```{r}
+#| label: summarise-prop-studying
+summary(raw_education_2014)
+```
+
+Maybe -99 means missing!? Are there other instances of -99?
+
+```{r}
+hist(raw_education_2014$prop_studying)
+```
+
+
+```{r}
+#| label: scan-missings
+
+miss_scan_count(
+  data = raw_education_2014,
+  search = -99
+)
+```
