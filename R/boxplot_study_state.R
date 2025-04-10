@@ -1,3 +1,12 @@
+#' Provide a boxplot of study data
+#'
+#' @param data data from education 2014
+#'
+#' @returns a ggplot object
+#' @export
+#'
+#' @examples
+#' # no example data yet
 boxplot_study_state <- function(data) {
   ggplot2::ggplot(
     data,
