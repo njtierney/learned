@@ -1,8 +1,8 @@
 # write a cleaning data function
 clean_education_data <- function(data) {
   data |>
-    mutate(
+    dplyr::mutate(
       age_group = clean_age_groups(age_group),
-      prop_studying = na_if(prop_studying, -99)
+      prop_studying = dplyr::na_if(prop_studying, -99)
     )
 }

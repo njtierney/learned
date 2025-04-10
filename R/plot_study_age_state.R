@@ -1,11 +1,11 @@
 plot_study_age_state <- function(data) {
-  ggplot(
+  ggplot2::ggplot(
     data = data,
-    aes(
+    ggplot2::aes(
       x = prop_studying,
       y = age_group
     )
   ) +
-    geom_col() +
-    facet_wrap(~state_territory, ncol = 2)
+    ggplot2::geom_col() +
+    ggplot2::facet_wrap(~state_territory, ncol = 2)
 }
