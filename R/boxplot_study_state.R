@@ -1,10 +1,10 @@
 boxplot_study_state <- function(data) {
-  ggplot(
+  ggplot2::ggplot(
     data,
-    aes(
+    ggplot2::aes(
       x = prop_studying,
       y = state_territory
     )
   ) +
-    geom_boxplot()
+    ggplot2::geom_boxplot()
 }
