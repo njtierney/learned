@@ -18,3 +18,6 @@ Imports:
     dplyr,
     ggplot2,
     stringr
+Depends: 
+    R (>= 3.5)
+LazyData: true
