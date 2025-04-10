@@ -30,9 +30,7 @@ vignette: >
 
 ```{r}
 #| label: libraries
-library(tidyverse)
 library(naniar)
-library(here)
 library(learned)
 ```
 
