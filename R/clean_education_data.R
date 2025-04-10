@@ -6,7 +6,7 @@
 #' @export
 #'
 #' @examples
-#' # not used yet
+#' clean_education_data(raw_education_2014)
 clean_education_data <- function(data) {
   data |>
     dplyr::mutate(

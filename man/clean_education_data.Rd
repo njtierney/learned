@@ -16,5 +16,5 @@ cleaned up data, with NAs identified, and age groups cleaned
 Cleaning 2014 education data
 }
 \examples{
-# not used yet
+clean_education_data(raw_education_2014)
 }

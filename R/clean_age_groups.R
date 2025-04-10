@@ -9,7 +9,7 @@
 #' @export
 #'
 #' @examples
-#' # not used yet
+#' clean_age_groups(raw_education_2014)
 clean_age_groups <- function(age_groups) {
   clean_age <- stringr::str_replace_all(
     age_groups,

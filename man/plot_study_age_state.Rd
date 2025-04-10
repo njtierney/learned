@@ -16,5 +16,5 @@ ggplot
 Plot study against age and state
 }
 \examples{
-# not used yet
+plot_study_age_state(raw_education_2014)
 }

@@ -6,7 +6,7 @@
 #' @export
 #'
 #' @examples
-#' # not used
+#' summarise_prop_study(raw_education_2014)
 summarise_prop_study <- function(data) {
   data |>
     dplyr::group_by(state_territory) |>

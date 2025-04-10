@@ -16,5 +16,5 @@ summarise_prop_study(data)
 Provide a summary of the proportion studying
 }
 \examples{
-# not used
+summarise_prop_study(raw_education_2014)
 }

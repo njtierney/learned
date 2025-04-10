@@ -17,5 +17,5 @@ numbers separated by \verb{_}
 Turn text from \code{10--12} or \code{10-12} into \verb{10_12}
 }
 \examples{
-# not used yet
+clean_age_groups(raw_education_2014)
 }

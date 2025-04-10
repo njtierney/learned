@@ -6,7 +6,7 @@
 #' @export
 #'
 #' @examples
-#' # not used yet
+#' plot_study_age_state(raw_education_2014)
 plot_study_age_state <- function(data) {
   ggplot2::ggplot(
     data = data,
