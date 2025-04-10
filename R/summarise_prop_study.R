@@ -1,3 +1,12 @@
+#' Provide a summary of the proportion studying
+#'
+#' @param data education 2014 data
+#'
+#' @returns 5 number summary containing min, q1, median, q3, and standard deviation
+#' @export
+#'
+#' @examples
+#' # not used
 summarise_prop_study <- function(data) {
   data |>
     dplyr::group_by(state_territory) |>

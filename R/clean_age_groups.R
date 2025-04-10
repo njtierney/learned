@@ -1,5 +1,15 @@
-# clean age groups
-# We need to make sure that they are separated by `_` only:
+#' Clean age group data
+#'
+#' Turn text from `10--12` or `10-12` into `10_12`
+#'
+#' @param age_groups age group data with `-` or `--` or `---` separating the
+#'   numbers.
+#'
+#' @returns numbers separated by `_`
+#' @export
+#'
+#' @examples
+#' # not used yet
 clean_age_groups <- function(age_groups) {
   clean_age <- stringr::str_replace_all(
     age_groups,
